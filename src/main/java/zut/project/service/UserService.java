@@ -43,7 +43,11 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public Object findByName(String name) {
+	public User findByName(String name) {
 		return userRepository.findByName( name );
+	}
+
+	public void deleteById(Integer id) {
+		userRepository.delete( id );
 	}
 }

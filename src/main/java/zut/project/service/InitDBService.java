@@ -58,7 +58,7 @@ public class InitDBService {
 
 		userRepository.save( userAdmin );
 		
-		Descriptor file1 = new Descriptor();
+		/*Descriptor file1 = new Descriptor();
 		file1.setName("DUMMY FILE1");
 		file1.setUser( userAdmin );
 		
@@ -68,6 +68,6 @@ public class InitDBService {
 		file2.setName("DUMMY FILE1");
 		file2.setUser( userAdmin );
 		
-		descriptorRepository.save(file2);
+		descriptorRepository.save(file2);*/
 	}
 }

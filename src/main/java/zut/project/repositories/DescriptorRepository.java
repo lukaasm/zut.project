@@ -1,9 +1,13 @@
 package zut.project.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import zut.project.entity.Descriptor;
+import zut.project.entity.User;
 
 public interface DescriptorRepository extends JpaRepository<Descriptor, Integer> {
 
+	List<Descriptor> findByUser( User user );
 }

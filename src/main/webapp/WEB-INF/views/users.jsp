@@ -6,6 +6,7 @@
 		<thead>
 			<tr>
 				<td>user name</td>
+				<td style="width:10px"></td>
 			</tr>
 		</thead>
 		<tbody>
@@ -14,6 +15,10 @@
 					<td>
 						<spring:url value="/users/${user.id}" var="userUrl" />
 						<a href="${userUrl}" > ${user.name} </a>
+					</td>
+					<td style="width:10px">
+						<spring:url value="/users/delete/${user.id}" var="deleteUrl" />
+						<a href="${deleteUrl}" ><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
 				</tr>
 			</jstl:forEach>
