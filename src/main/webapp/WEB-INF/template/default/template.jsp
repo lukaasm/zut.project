@@ -8,7 +8,9 @@
 </head>
 <body>
 	<tilesx:useAttribute name="current"/>
-
+	<script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"> </script>
+    
     <div class="container" style="padding: 15px" >
         <tiles:insertAttribute name="header" />
         <tiles:insertAttribute name="menu" />
