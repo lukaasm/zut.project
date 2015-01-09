@@ -46,26 +46,28 @@ public class FileController {
     }
     
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String upload(@RequestParam("file") CommonsMultipartFile file, Principal principal) {
-    	Descriptor descriptor = new Descriptor();
+	public String upload(@RequestParam("file") CommonsMultipartFile[] files, Principal principal) {
     	
-    	descriptor.setName(file.getOriginalFilename());
-    	descriptor.setType(file.getContentType());
-    	descriptor.setUploadTime(new Date());
-    	descriptor.setUser(userService.findByName(principal.getName()));
-    	// temporary URL
-    	descriptor.setUrl("../" + file.getOriginalFilename());
-    	    	    	
-    	try
-    	{
-    		file.transferTo(new File(descriptor.getUrl()));
-    		descriptorService.save(descriptor);
-    	}
-    	catch(Exception ex)
-    	{
-    		System.out.println(ex.getMessage());
-    	}
+    	for (CommonsMultipartFile file : files){
+    		Descriptor descriptor = new Descriptor();
     	
+	    	descriptor.setName(file.getOriginalFilename());
+	    	descriptor.setType(file.getContentType());
+	    	descriptor.setUploadTime(new Date());
+	    	descriptor.setUser(userService.findByName(principal.getName()));
+	    	// temporary URL
+	    	descriptor.setUrl("../" + file.getOriginalFilename());
+	    	    	    	
+	    	try
+	    	{
+	    		file.transferTo(new File(descriptor.getUrl()));
+	    		descriptorService.save(descriptor);
+	    	}
+	    	catch(Exception ex)
+	    	{
+	    		System.out.println(ex.getMessage());
+	    	}
+    	}
 		return "redirect:/files";
 	}
     
@@ -75,7 +77,7 @@ public class FileController {
         
         model.addAttribute("files", descriptorService.findAll());
          
-        return "files";
+        return "files"; 
     }
     
     @RequestMapping(value = "/files/{id}", method = RequestMethod.GET)

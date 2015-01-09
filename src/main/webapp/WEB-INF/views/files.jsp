@@ -47,7 +47,7 @@ $(function(){
         <form name="form" method="POST" enctype="multipart/form-data" action="upload">
           <div class="form-group">
             <label for="choose-file" class="control-label">Choose file:</label>
-            <input type="file"  name="file">
+            <input type="file"  name="file" multiple>
           </div>
           <div class="form-group">
             <label for="message-text" class="control-label">Description:</label>
