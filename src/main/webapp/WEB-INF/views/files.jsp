@@ -1,5 +1,13 @@
 <%@ include file="../template/taglib.jsp" %>
 
+<script>
+$(function(){
+	$("button#btnUpload").click(function(){
+		document.forms["form"].submit();
+		$("#upload").modal('hide');
+	});
+});
+</script>
 <div class="body">
 	<h1>Files!</h1>
 	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#upload" >Upload</button><br></br>
@@ -36,10 +44,10 @@
         <h4 class="modal-title" id="UploadLabel">Upload</h4>
       </div>
       <div class="modal-body">
-        <form>
+        <form name="form" method="POST" enctype="multipart/form-data" action="upload">
           <div class="form-group">
             <label for="choose-file" class="control-label">Choose file:</label>
-            <input type="file"  id="file">
+            <input type="file"  name="file">
           </div>
           <div class="form-group">
             <label for="message-text" class="control-label">Description:</label>
@@ -49,7 +57,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" id="btupload" class="btn btn-primary">Upload</button>
+        <button type="button" id="btnUpload" class="btn btn-primary">Upload</button>
       </div>
     </div>
   </div>

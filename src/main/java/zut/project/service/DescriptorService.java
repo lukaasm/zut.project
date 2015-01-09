@@ -1,6 +1,7 @@
 package zut.project.service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,4 +24,8 @@ public class DescriptorService {
 		
 		return descriptorRepository.findOne(id);
 	}
+	
+	public void save(Descriptor descriptor){
+		descriptorRepository.save(descriptor);
+	}		
 }
