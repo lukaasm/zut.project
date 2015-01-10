@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import zut.project.entity.Descriptor;
+import zut.project.entity.User;
 import zut.project.repositories.DescriptorRepository;
 
 @Service
 public class DescriptorService {
 
+	public final String FOLDER = "Folder";
+	
 	@Autowired
 	private DescriptorRepository descriptorRepository;
 	
@@ -27,5 +30,13 @@ public class DescriptorService {
 	
 	public void save(Descriptor descriptor){
 		descriptorRepository.save(descriptor);
-	}		
+	}	
+	
+	public Descriptor findByName(String name) {
+		return descriptorRepository.findByName( name );
+	}
+	
+	public List<Descriptor> findByParent(Descriptor parent){
+		return descriptorRepository.findByParent(parent);
+	}
 }

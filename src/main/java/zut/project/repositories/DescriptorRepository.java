@@ -10,4 +10,6 @@ import zut.project.entity.User;
 public interface DescriptorRepository extends JpaRepository<Descriptor, Integer> {
 
 	List<Descriptor> findByUser( User user );
+	Descriptor findByName(String name);
+	List<Descriptor> findByParent(Descriptor parent);
 }

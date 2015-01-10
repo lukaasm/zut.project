@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import zut.project.entity.Descriptor;
@@ -45,12 +47,15 @@ public class FileController {
         return "upload";
     }
     
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String upload(@RequestParam("file") CommonsMultipartFile[] files, Principal principal) {
+    @RequestMapping(value = "/files/upload", method = RequestMethod.POST)
+	public String upload(@RequestParam("file") CommonsMultipartFile[] files,  @RequestParam("parent") String parent,
+			Principal principal) {
     	
     	for (CommonsMultipartFile file : files){
     		Descriptor descriptor = new Descriptor();
-    	
+    		Descriptor desParent = descriptorService.findByName(parent);
+    		descriptor.setParent(desParent);
+    		
 	    	descriptor.setName(file.getOriginalFilename());
 	    	descriptor.setType(file.getContentType());
 	    	descriptor.setUploadTime(new Date());
@@ -74,18 +79,27 @@ public class FileController {
     @RequestMapping(value = "/files", method = RequestMethod.GET)
     public String files(Model model) {
         logger.info("Files page !");
-        
-        model.addAttribute("files", descriptorService.findAll());
+        // get items without any parents
+        model.addAttribute("files", descriptorService.findByParent(null));
          
         return "files"; 
     }
     
-    @RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/files/{name}", method = RequestMethod.GET)
+    public String filesInFolder(@PathVariable String name, Model model) {
+        logger.info("Files page !");
+        Descriptor parent = descriptorService.findByName(name);     
+        model.addAttribute("files", descriptorService.findByParent(parent));
+         
+        return "files"; 
+    }
+    
+    @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
     public void download(@PathVariable Integer id, HttpServletResponse response) {
          Descriptor desc = (Descriptor) descriptorService.findOne(id);
          File file = new File(desc.getUrl());
          try {
-             // get your file as InputStream
+             
         	 BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
         	 response.setContentType(desc.getType());
              response.setContentLength((int)file.length());
@@ -98,6 +112,33 @@ public class FileController {
              System.out.println(ex.getMessage());
            }                     
        
-    }
-     
+    }    
+   
+    @RequestMapping(value = "/files/createFolder", method = RequestMethod.POST)
+   	public String createFolder(@RequestParam("name") String name, @RequestParam("parent") String parent, 
+   			Principal principal) {       	
+       	
+       		Descriptor descriptor = new Descriptor();
+       		Descriptor desParent = descriptorService.findByName(parent);
+       	
+   	    	descriptor.setName(name);
+   	    	descriptor.setType(descriptorService.FOLDER);
+   	    	descriptor.setUploadTime(new Date());
+   	    	descriptor.setUser(userService.findByName(principal.getName()));
+   	    	descriptor.setParent(desParent);
+   	    	
+   	    	    	    	
+   	    	try
+   	    	{
+   	    		System.out.println(name);   	    		    
+   	    		descriptorService.save(descriptor);
+   	    	}
+   	    	catch(Exception ex)
+   	    	{
+   	    		System.out.println(ex.getMessage());
+   	    	}
+       	
+   		return "redirect:/files";
+   	}
+    
 }
