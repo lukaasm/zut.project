@@ -3,6 +3,7 @@ package zut.project.entity;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,7 +25,7 @@ public class Descriptor {
 	private String type;
 	private String hash;
 	
-	@OneToMany(mappedBy="parent")
+	@OneToMany(mappedBy="parent", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<Descriptor> descriptors;
 	
 	@ManyToOne

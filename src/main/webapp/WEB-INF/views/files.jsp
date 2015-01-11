@@ -28,16 +28,68 @@ $(function(){
 		
 	});
 });
+
+// selecting rows
+onload = function() {
+	var rowSelected = 0;
+	if (!document.getElementsByTagName || !document.createTextNode)
+			return;
+		var rows = document.getElementById('files').rows;
+		
+		for (i = 1; i < rows.length; i++) {
+			rows[i].onclick = function() {				
+				if (this.style.backgroundColor == ""){
+					this.style.backgroundColor = "lightblue";
+					rowSelected++;
+				}
+				else{
+					this.style.backgroundColor = "";
+					rowSelected--;
+				
+				}
+				if(rowSelected > 0){
+					document.getElementById('rowSelected').innerHTML = rowSelected;
+					document.getElementById('btnDelete').style.display = '';
+				}
+				else
+					document.getElementById('btnDelete').style.display = 'none';
+			}
+		}
+	}
+	
+$(function(){
+	$("button#btnDelete").click(function(){
+		var id = "";
+		
+		var rows = document.getElementById('files').rows;
+		for (i = 1; i < rows.length; i++) {
+			
+			if(rows[i].style.backgroundColor != ""){				
+				id += "," + $.trim(rows[i].cells[0].innerHTML);
+			}
+		}				
+		
+		document.forms["formDelete"]["filesToDelete"].value = id;		
+		document.forms["formDelete"].submit();		
+		
+	});
+});
 </script>
 <div class="body">
 	<h1>Files!</h1>
 	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#upload" >Upload</button>
 	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createFolder" >Create folder</button>
-	<br></br>
-	<table class="table table-bordered table-hover">
+	<button  id="btnDelete"  class="btn btn-primary" type="button" style="display:none"> Delete <span id="rowSelected" class="badge">#</span></button>
+	
+	<form:form name="formDelete" method="POST" servletRelativeAction="/files/delete" >
+	<input type="hidden" name="filesToDelete" >
+	</form:form>		
+	
+
+	<table id="files" class="table table-bordered table-hover">
 		<thead>
 			<tr>
-				<td>id</td><td>file name</td><td>hash</td>
+<td>id</td><td>file name</td><td>hash</td>
 			</tr>
 		</thead>
 		<tbody>

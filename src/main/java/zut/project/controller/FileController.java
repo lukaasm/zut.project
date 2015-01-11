@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -139,6 +142,35 @@ public class FileController {
    	    	}
        	
    		return "redirect:/files";
-   	}
+   	} 
+    
+    @RequestMapping(value = "/files/delete", method = RequestMethod.POST)
+    public String deleteFiles(@RequestParam("filesToDelete") String Delete){   
+    	String[] tab = Delete.split(",");
+    	for(String i : tab){
+    		try
+    		{
+    			int id = Integer.parseInt(i);
+    			Descriptor desc = (Descriptor) descriptorService.findOne(id);
+    			
+    			// file must be delete from server
+    			if(!desc.getType().equals(descriptorService.FOLDER)){
+    				new File(desc.getUrl()).delete();
+    				System.out.println("Delete file");
+    			}
+    			
+    			descriptorService.deleteById(id);
+    			
+    			System.out.println("Delete: " +i);
+    		}
+    		catch(Exception e)
+    		{
+    			System.out.println(e.getMessage());
+    		}
+    		
+    	}
+    	    	
+    	return "redirect:/files";    	
+    }
     
 }
