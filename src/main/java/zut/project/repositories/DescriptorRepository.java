@@ -13,4 +13,5 @@ public interface DescriptorRepository extends JpaRepository<Descriptor, Integer>
 	Descriptor findByName(String name);
 	List<Descriptor> findByParent(Descriptor parent);
 	List<Descriptor> findByUserAndParent(User user, Descriptor parent);
+	List<Descriptor> findByParentAndAccess(Descriptor parent, String access);
 }

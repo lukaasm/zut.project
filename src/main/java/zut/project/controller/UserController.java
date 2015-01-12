@@ -83,9 +83,12 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String doRegister(@ModelAttribute("createUser") User user) {
+	public String doRegister(@ModelAttribute("createUser") User user, Model model) {
 		if (userService.findByName(user.getName()) != null)
-			return "user-register-failed";
+		{
+			model.addAttribute("This username is already taken!");
+			return "error";
+		}
 
 		userService.save(user);
 		return "home";

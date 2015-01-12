@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.management.DescriptorRead;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,6 +46,13 @@ public class FileController {
 	
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
      
+    @RequestMapping(value = { "/", "/home" }, method = RequestMethod.GET)
+    public String home(Model model) {
+        model.addAttribute("files", descriptorService.findByParentAndAccess(null, descriptorService.ACCESS_PUBLIC));
+         
+        return "home";
+    }
+    
     @RequestMapping(value = "/upload", method = RequestMethod.GET)
     public String upload(Model model) {
         logger.info("Upload page !");
@@ -67,6 +75,7 @@ public class FileController {
 	    	descriptor.setType(file.getContentType());
 	    	descriptor.setUploadTime(new Date());
 	    	descriptor.setUser(user);
+	    	descriptor.setAccess(descriptorService.ACCESS_PRIVATE);
 
 	    	descriptor.setUrl("../" + file.getOriginalFilename());
    	    	
@@ -105,15 +114,23 @@ public class FileController {
     @RequestMapping(value = "/files/{name}", method = RequestMethod.GET)
     public String filesInFolder(@PathVariable String name, Model model) {
         logger.info("Files page !");
-        Descriptor parent = descriptorService.findByName(name);     
+        Descriptor parent = descriptorService.findByName(name);
         model.addAttribute("files", descriptorService.findByParent(parent));
-         
+        
         return "files"; 
     }
-    
+       
     @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
-    public void download(@PathVariable Integer id, HttpServletResponse response) {
+    public String download(@PathVariable Integer id, HttpServletResponse response, Principal princ, Model model) {
          Descriptor desc = (Descriptor) descriptorService.findOne(id);
+         
+         User user = userService.findByName(princ.getName());
+         if ( desc.getAccess().equals(descriptorService.ACCESS_PRIVATE) && user != desc.getUser() )
+         {
+ 			model.addAttribute("This is private!");
+ 			return "error?id=file-private";
+         }
+        	 
          File file = new File(desc.getUrl());
          try {
              
@@ -128,7 +145,7 @@ public class FileController {
            } catch (IOException ex) {
              System.out.println(ex.getMessage());
            }                     
-       
+     	return "home";
     }    
    
     @RequestMapping(value = "/files/createFolder", method = RequestMethod.POST)
@@ -156,6 +173,24 @@ public class FileController {
    	    		System.out.println(ex.getMessage());
    	    	}
        	
+   		return "redirect:/files";
+   	} 
+    
+    @RequestMapping(value = "/files/updateAccess", method = RequestMethod.POST)
+   	public String updateAccess(@RequestParam("access") String access, @RequestParam("file_id") String id, Principal principal) {       	
+       	
+    	System.out.println( id + " " + access );
+    	
+    	try
+    	{
+	   		Descriptor descriptor = (Descriptor) descriptorService.findOne(Integer.parseInt(id));
+	       	descriptor.setAccess(access);
+	   		descriptorService.save(descriptor);
+    	}
+    	catch(Exception ex)
+    	{
+    		System.out.println(ex.getMessage());
+    	}
    		return "redirect:/files";
    	} 
     

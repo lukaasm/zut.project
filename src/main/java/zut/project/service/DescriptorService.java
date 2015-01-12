@@ -15,6 +15,10 @@ public class DescriptorService {
 
 	public final String FOLDER = "Folder";
 	
+	public final String ACCESS_PUBLIC = "a_public";
+	public final String ACCESS_PRIVATE = "a_private";
+	public final String ACCESS_LINK = "a_link";
+
 	@Autowired
 	private DescriptorRepository descriptorRepository;
 	
@@ -46,5 +50,9 @@ public class DescriptorService {
 
 	public List<Descriptor> findByUserAndParent(User user, Descriptor parent) {
 		return descriptorRepository.findByUserAndParent(user,parent);
+	}
+
+	public Object findByParentAndAccess(Descriptor parent, String access) {
+		return descriptorRepository.findByParentAndAccess(parent,access);
 	}
 }

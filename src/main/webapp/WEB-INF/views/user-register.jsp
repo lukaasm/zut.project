@@ -22,8 +22,6 @@ function validateForm(){
 
 <div class="container">
 	<form:form name="form" commandName="createUser" cssClass="form-horizontal"  onsubmit="return validateForm();">
-	
-
 		<div class ="form-group">
 			<label for="name" class="col-sm-2 control-label">Username:</label>
 			<div class="col-sm-10">

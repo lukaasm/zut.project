@@ -11,9 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-
 @Entity
 public class Descriptor {
+	
 	@Id
 	@GeneratedValue
 	private Integer id;
@@ -23,7 +23,7 @@ public class Descriptor {
 	private Date uploadTime;
 	
 	private String type;
-	private String hash;
+	private String access;
 	
 	@OneToMany(mappedBy="parent", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<Descriptor> descriptors;
@@ -71,12 +71,7 @@ public class Descriptor {
 	public void setParent(Descriptor parent) {
 		this.parent = parent;
 	}
-	public String getHash() {
-		return hash;
-	}
-	public void setHash(String hash) {
-		this.hash = hash;
-	}
+
 	public User getUser() {
 		return user;
 	}
@@ -88,5 +83,11 @@ public class Descriptor {
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	public String getAccess() {
+		return access;
+	}
+	public void setAccess(String access) {
+		this.access = access;
 	}
 }
