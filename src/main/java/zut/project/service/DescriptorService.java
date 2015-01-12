@@ -43,4 +43,8 @@ public class DescriptorService {
 	public void deleteById(int id){
 		descriptorRepository.delete(id);
 	}
+
+	public List<Descriptor> findByUserAndParent(User user, Descriptor parent) {
+		return descriptorRepository.findByUserAndParent(user,parent);
+	}
 }

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import zut.project.entity.Descriptor;
+import zut.project.entity.User;
 import zut.project.service.DescriptorService;
 import zut.project.service.UserService;
  
@@ -55,6 +56,8 @@ public class FileController {
 	public String upload(@RequestParam("file") CommonsMultipartFile[] files,  @RequestParam("parent") String parent,
 			Principal principal) {
     	
+   		User user = userService.findByName(principal.getName());
+
     	for (CommonsMultipartFile file : files){
     		Descriptor descriptor = new Descriptor();
     		Descriptor desParent = descriptorService.findByName(parent);
@@ -63,10 +66,10 @@ public class FileController {
 	    	descriptor.setName(file.getOriginalFilename());
 	    	descriptor.setType(file.getContentType());
 	    	descriptor.setUploadTime(new Date());
-	    	descriptor.setUser(userService.findByName(principal.getName()));
-	    	// temporary URL
+	    	descriptor.setUser(user);
+
 	    	descriptor.setUrl("../" + file.getOriginalFilename());
-	    	    	    	
+   	    	
 	    	try
 	    	{
 	    		file.transferTo(new File(descriptor.getUrl()));
@@ -80,6 +83,7 @@ public class FileController {
 		return "redirect:/files";
 	}
     
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/files", method = RequestMethod.GET)
     public String files(Model model) {
         logger.info("Files page !");
@@ -134,12 +138,13 @@ public class FileController {
        		Descriptor descriptor = new Descriptor();
        		Descriptor desParent = descriptorService.findByName(parent);
        	
+       		User user = userService.findByName(principal.getName());
+       		
    	    	descriptor.setName(name);
    	    	descriptor.setType(descriptorService.FOLDER);
    	    	descriptor.setUploadTime(new Date());
-   	    	descriptor.setUser(userService.findByName(principal.getName()));
+   	    	descriptor.setUser( user );
    	    	descriptor.setParent(desParent);
-   	    	
    	    	    	    	
    	    	try
    	    	{

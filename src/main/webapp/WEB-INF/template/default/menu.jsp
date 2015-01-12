@@ -5,11 +5,6 @@
 		<spring:url
 			value="/home" var="homeUrl" htmlEscape="true" /> <a
 		href="${homeUrl}"><span class="glyphicon glyphicon-home" /> Home </a></li>
-	<li>
-		<spring:url
-			value="/about" var="aboutUrl" htmlEscape="true" /> <a
-		href="${aboutUrl}"><span class="glyphicon glyphicon-info-sign" /> About</a>
-	</li>
 	<security:authorize access="! isAuthenticated()">
 		<li>
 			<spring:url value="/register" var="registerUrl" htmlEscape="true" />
@@ -42,8 +37,7 @@
 	    			<spring:url value="/account" var="accountUrl" htmlEscape="true" />
 			    
 				   <li><a href="${accountUrl}">Details</a></li>
-				   <security:authentication property="principal.username" var="currentUser"/>
-				   <spring:url value="/files/${currentUser}" var="filesUrl2" htmlEscape="true" />
+				   <spring:url value="/account/files" var="filesUrl2" htmlEscape="true" />
 				   <li><a href="${filesUrl2}">My files</a></li>
 			    </ul>
 		    </li>
@@ -52,4 +46,9 @@
 			<a href="${logoutUrl}"><span class="glyphicon glyphicon-chevron-down"/> Logout</a>
 		</li>
 </security:authorize>
+	<li>
+		<spring:url
+			value="/about" var="aboutUrl" htmlEscape="true" /> <a
+		href="${aboutUrl}"><span class="glyphicon glyphicon-info-sign" /> About</a>
+	</li>
 </ul>

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import zut.project.entity.Role;
 import zut.project.entity.User;
 import zut.project.repositories.RoleRepository;
+import zut.project.service.DescriptorService;
 import zut.project.service.UserService;
 
 @Controller
@@ -22,6 +23,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private DescriptorService descriptorService;
+	
 	@ModelAttribute("createUser")
 	public User construct() {
 		return new User();
@@ -44,10 +48,19 @@ public class UserController {
 		return "user-login";
 	}
 
+    @PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping("/account")
 	public String account(Model model, Principal principal) {
 		model.addAttribute("user", userService.findByName(principal.getName()));
 		return "user-detail";
+	}
+	
+    @PreAuthorize("hasRole('ROLE_USER')")
+	@RequestMapping("/account/files")
+	public String accountFiles(Model model, Principal principal) {
+		User user = userService.findByName(principal.getName());
+		model.addAttribute("files", descriptorService.findByUserAndParent(user, null));
+		return "files";
 	}
 
 	@RequestMapping("/users/delete/{id}")
