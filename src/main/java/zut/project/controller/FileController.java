@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,6 +85,15 @@ public class FileController {
         logger.info("Files page !");
         // get items without any parents
         model.addAttribute("files", descriptorService.findByParent(null));
+         
+        return "files"; 
+    }
+    
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/files/all")
+    public String filesAll(Model model) {
+        logger.info("Files page !");
+        model.addAttribute("files", descriptorService.findAll());
          
         return "files"; 
     }

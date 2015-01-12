@@ -3,6 +3,7 @@ package zut.project.controller;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,8 +27,9 @@ public class UserController {
 		return new User();
 	}
 
-	@RequestMapping("/users")
-	public String users(Model model) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping("/users/all")
+	public String users(Model model, Principal principal) {
 		model.addAttribute("users", userService.findAll());
 		return "users";
 	}
@@ -51,6 +53,7 @@ public class UserController {
 	@RequestMapping("/users/delete/{id}")
 	public String delete(Model model, @PathVariable Integer id,
 			Principal principal) {
+		
 		model.addAttribute("users", userService.findAll());
 
 		userService.deleteById(id);
