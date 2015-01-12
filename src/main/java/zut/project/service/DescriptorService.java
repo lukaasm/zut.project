@@ -47,4 +47,9 @@ public class DescriptorService {
 	public List<Descriptor> findByUserAndParent(User user, Descriptor parent) {
 		return descriptorRepository.findByUserAndParent(user,parent);
 	}
+
+	public void updateParent(int folderId, int elementId){
+		descriptorRepository.setNewParent(folderId, elementId);
+
+	}
 }
