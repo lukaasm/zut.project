@@ -55,4 +55,9 @@ public class DescriptorService {
 	public Object findByParentAndAccess(Descriptor parent, String access) {
 		return descriptorRepository.findByParentAndAccess(parent,access);
 	}
+
+	public void updateParent(int folderId, int elementId){
+		descriptorRepository.setNewParent(folderId, elementId);
+
+	}
 }

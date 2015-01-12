@@ -86,7 +86,7 @@ public class FileController {
 	    	}
 	    	catch(Exception ex)
 	    	{
-	    		System.out.println(ex.getMessage());
+	    		System.out.println(ex.getMessage()); 
 	    	}
     	}
 		return "redirect:/files";
@@ -212,6 +212,28 @@ public class FileController {
     			descriptorService.deleteById(id);
     			
     			System.out.println("Delete: " +i);
+    		}
+    		catch(Exception e)
+    		{
+    			System.out.println(e.getMessage());
+    		}
+    		
+    	}
+    	    	
+    	return "redirect:/files";    	
+    }
+    
+    @RequestMapping(value = "/files/move", method = RequestMethod.POST)
+    public String moveFilesToFolder(@RequestParam("folder") int folder, @RequestParam("elements") String elements){   
+    	String[] tab = elements.split(",");
+    	for(String i : tab){
+    		try
+    		{
+    			int id = Integer.parseInt(i);
+    			if(folder == id)
+    				continue;
+    			descriptorService.updateParent(folder, id);
+    			System.out.println(i);
     		}
     		catch(Exception e)
     		{

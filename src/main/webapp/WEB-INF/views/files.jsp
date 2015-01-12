@@ -1,112 +1,157 @@
 <%@ include file="../template/taglib.jsp"%>
 
 <script>
-	$(function() {
-		$("button#btnUpload").click(function() {
-			//get last parent
-			var path = document.URL.split("/");
-			document.forms["form"]["parent"].value = path[path.length - 1];
+$(function(){
+	$("button#btnUpload").click(function(){
+		//get last parent
+		var path = document.URL.split("/");
+		document.forms["form"]["parent"].value = path[path.length - 1];
+		
+		document.forms["form"].submit();
+		$("#upload").modal('hide');
+	});
+});
 
-			document.forms["form"].submit();
-			$("#upload").modal('hide');
+$(function(){
+	$("button#btnCreateFolder").click(function(){
+		//get last parent
+		var path = document.URL.split("/");
+		document.forms["form_createFolder"]["parent"].value = path[path.length - 1];
+		
+		var name = document.forms["form_createFolder"]["name"].value;
+		if(name == '') alert("Name is required");
+		else if (!isNaN(name)) alert("Name cannot be a number");
+		else{				
+			document.forms["form_createFolder"].submit();
+			$("#createFolder").modal('hide');
+		}
+		
+	});
+});
+
+$(function() {
+	$("button#btnDelete").click(function() {
+		var id = getSelectedId();
+		
+		$.post("${pageContext.request.contextPath}/files/delete", {
+			filesToDelete : id
+		}, function() {
+			window.location.replace(document.URL);
+		});					
+	});
+});
+
+$(function(){
+	$('#changeAccess').on(
+			'show.bs.modal',
+			function(e) {
+				document.forms["changeAccess"]["file_id"].value = $(
+						e.relatedTarget).attr("value");
+			});
+
+	$(function() {
+		$("button#btnChangeAccess").click(function() {
+			document.forms["changeAccess"].submit();
+			$("#changeAccess").modal('hide');
 		});
 	});
+});
 
-	$(function() {
-		$("button#btnCreateFolder")
-				.click(
-						function() {
-							//get last parent
-							var path = document.URL.split("/");
-							document.forms["form_createFolder"]["parent"].value = path[path.length - 1];
-
-							var name = document.forms["form_createFolder"]["name"].value;
-							if (name == '')
-								alert("Name is required");
-							else if (!isNaN(name))
-								alert("Name cannot be a number");
-							else {
-								document.forms["form_createFolder"].submit();
-								$("#createFolder").modal('hide');
-							}
-
-						});
-	});
-
-	// selecting rows
-	onload = function() {
-		var rowSelected = 0;
-		if (!document.getElementsByTagName || !document.createTextNode)
+// selecting rows
+onload = function() {
+	var rowSelected = 0;
+	if (!document.getElementsByTagName || !document.createTextNode)
 			return;
 		var rows = document.getElementById('files').rows;
-
+		
 		for (i = 1; i < rows.length; i++) {
-			rows[i].onclick = function() {
-				if (this.style.backgroundColor == "") {
+			rows[i].onclick = function() {				
+				if (this.style.backgroundColor == ""){
 					this.style.backgroundColor = "lightblue";
 					rowSelected++;
-				} else {
+				}
+				else{
 					this.style.backgroundColor = "";
 					rowSelected--;
-
+				
 				}
-				if (rowSelected > 0) {
+				if(rowSelected > 0){
 					document.getElementById('rowSelected').innerHTML = rowSelected;
 					document.getElementById('btnDelete').style.display = '';
-				} else
+					document.getElementById('btnMoveTo').style.display = '';
+				}
+				else{
 					document.getElementById('btnDelete').style.display = 'none';
+					document.getElementById('btnMoveTo').style.display = 'none';
+				}
 			}
 		}
 	}
 
-	$(function() {
-		$("button#btnDelete").click(function() {
-			var id = "";
+function getSelectedId(){
+	var id = "";
+	
+	var rows = document.getElementById('files').rows;
+	for (i = 1; i < rows.length; i++) {
+		
+		if(rows[i].style.backgroundColor != ""){				
+			id += $.trim(rows[i].cells[0].innerHTML) + ",";
+		}
+	}	
+	
+	return id;
+}
 
-			var rows = document.getElementById('files').rows;
-			for (i = 1; i < rows.length; i++) {
 
-				if (rows[i].style.backgroundColor != "") {
-					id += "," + $.trim(rows[i].cells[0].innerHTML);
-				}
-			}
-
-			document.forms["formDelete"]["filesToDelete"].value = id;
-			document.forms["formDelete"].submit();
-
+function setElementsToMove(folderId){
+	var elements = getSelectedId();
+	
+	
+	$.post("${pageContext.request.contextPath}/files/move", {
+			folder : folderId,
+			elements : elements
+		}, function() {
+			window.location.replace(document.URL);
 		});
+	}
 
-		$('#changeAccess').on(
-				'show.bs.modal',
-				function(e) {
-					document.forms["changeAccess"]["file_id"].value = $(
-							e.relatedTarget).attr("value");
-				});
 
-		$(function() {
-			$("button#btnChangeAccess").click(function() {
-				document.forms["changeAccess"].submit();
-				$("#changeAccess").modal('hide');
-			});
-		});
-	});
 </script>
+
 <div class="body">
 	<h1>Files!</h1>
-	<button type="button" class="btn btn-primary" data-toggle="modal"
-		data-target="#upload">Upload</button>
-	<button type="button" class="btn btn-primary" data-toggle="modal"
-		data-target="#createFolder">Create folder</button>
-	<button id="btnDelete" class="btn btn-primary" type="button"
-		style="display: none">
-		Delete <span id="rowSelected" class="badge">#</span>
-	</button>
 
-	<form:form name="formDelete" method="POST"
-		servletRelativeAction="/files/delete">
-		<input type="hidden" name="filesToDelete">
-	</form:form>
+	<div>
+		<ul class="nav nav-pills" role="tablist">
+			<li><button type="button" class="btn btn-primary"
+					data-toggle="modal" data-target="#upload">Upload</button></li>
+			<li><button type="button" class="btn btn-primary"
+					data-toggle="modal" data-target="#createFolder">Create
+					folder</button></li>
+			<li><button id="btnDelete" class="btn btn-primary" type="button"
+					style="display: none">
+					Delete <span id="rowSelected" class="badge">#</span>
+				</button></li>
 
+			<li class="dropdown">
+				<button id="btnMoveTo" type="button" style="display: none"
+					class="btn btn-primary" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false">
+					Move to ... <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+					<jstl:forEach items="${files}" var="file">
+						<spring:url value="/files/move/${file.id}" var="folderUrl" />
+						<jstl:if test="${file.type == 'Folder'}">
+							<li role="presentation"><a id="${file.id}" role="menuitem"
+								tabindex="-1" href="javascript:;"
+								onclick="setElementsToMove(this.id);"> ${file.name}</a></li>
+						</jstl:if>
+					</jstl:forEach>
+				</ul>
+			</li>
+		</ul>
+	</div>	
 
 	<table id="files" class="table table-bordered table-hover">
 		<thead>
@@ -114,8 +159,7 @@
 				<td width="5%">id</td>
 				<td>file name</td>
 				<td width="30%">content</td>
-				<td>access</td>
-
+				<td width="30%">access</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -125,12 +169,13 @@
 					<td><spring:url value="/download/${file.id}" var="fileUrl" />
 						<spring:url value="/files/${file.name}" var="folderUrl" /> <jstl:if
 							test="${file.type != 'Folder'}">
-							<a href="${fileUrl}"> ${file.name} </a>
+							<a href="${fileUrl}"><span class="glyphicon glyphicon-file"></span>
+								${file.name} </a>
 						</jstl:if> <jstl:if test="${file.type == 'Folder'}">
-							<a href="${folderUrl}"> ${file.name} </a>
+							<a href="${folderUrl}"><span
+								class="glyphicon glyphicon-folder-close"></span> ${file.name} </a>
 						</jstl:if></td>
-					<td>${file.type}</td>
-					<td><security:authentication
+					<td>${file.type}</td>					<td><security:authentication
 							property="principal.username" var="currentUser" /> <security:authorize
 							access="isAuthenticated()">
 							<security:authorize access="hasRole('ROLE_ADMIN')" var="isAdmin" />
@@ -147,8 +192,11 @@
 								</jstl:otherwise>
 							</jstl:choose>
 						</security:authorize>
+						<jstl:if test="${file.access == 'a_link'}">
+							<a href="${fileUrl}"><span class="glyphicon glyphicon-download"></span>
+								${fileUrl} </a>
+						</jstl:if>
 					</td>
-
 				</tr>
 			</jstl:forEach>
 		</tbody>
