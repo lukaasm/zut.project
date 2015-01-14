@@ -29,6 +29,7 @@ $(function(){
 	});
 });
 
+
 $(function() {
 	$("button#btnDelete").click(function() {
 		var id = getSelectedId();
@@ -49,13 +50,32 @@ $(function(){
 						e.relatedTarget).attr("value");
 			});
 
-	$(function() {
+$(function() {
 		$("button#btnChangeAccess").click(function() {
 			document.forms["changeAccess"].submit();
 			$("#changeAccess").modal('hide');
 		});
 	});
 });
+
+$(function(){
+	$("button#btnCreateAlbum").click(function(){
+		//get last parent
+		var path = document.URL.split("/");
+		document.forms["form_createAlbum"]["parent"].value = path[path.length - 1];
+		
+		var name = document.forms["form_createAlbum"]["name"].value;
+		if(name == '') alert("Name is required");
+		else if (!isNaN(name)) alert("Name cannot be a number");
+		else{				
+			document.forms["form_createAlbum"].submit();
+			$("#createAlbum").modal('hide');
+		}
+		
+	});
+});
+
+
 
 // selecting rows
 onload = function() {
@@ -128,6 +148,9 @@ function setElementsToMove(folderId){
 			<li><button type="button" class="btn btn-primary"
 					data-toggle="modal" data-target="#createFolder">Create
 					folder</button></li>
+			<li><button type="button" class="btn btn-primary"
+					data-toggle="modal" data-target="#createAlbum">Create
+					album</button></li>
 			<li><button id="btnDelete" class="btn btn-primary" type="button"
 					style="display: none">
 					Delete <span id="rowSelected" class="badge">#</span>
@@ -142,7 +165,7 @@ function setElementsToMove(folderId){
 				<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 					<jstl:forEach items="${files}" var="file">
 						<spring:url value="/files/move/${file.id}" var="folderUrl" />
-						<jstl:if test="${file.type == 'Folder'}">
+						<jstl:if test="${file.type == 'Folder' || file.type == 'Album'}">
 							<li role="presentation"><a id="${file.id}" role="menuitem"
 								tabindex="-1" href="javascript:;"
 								onclick="setElementsToMove(this.id);"> ${file.name}</a></li>
@@ -167,13 +190,19 @@ function setElementsToMove(folderId){
 				<tr>
 					<td>${file.id}</td>
 					<td><spring:url value="/download/${file.id}" var="fileUrl" />
-						<spring:url value="/files/${file.name}" var="folderUrl" /> <jstl:if
-							test="${file.type != 'Folder'}">
+						<spring:url value="/files/${file.name}" var="folderUrl" />
+						<spring:url value="/albums/${file.id}" var="albumUrl" /> 
+						<jstl:if
+							test="${file.type != 'Folder' && file.type != 'Album'}">
 							<a href="${fileUrl}"><span class="glyphicon glyphicon-file"></span>
 								${file.name} </a>
 						</jstl:if> <jstl:if test="${file.type == 'Folder'}">
 							<a href="${folderUrl}"><span
 								class="glyphicon glyphicon-folder-close"></span> ${file.name} </a>
+						</jstl:if>
+						 <jstl:if test="${file.type == 'Album'}">
+							<a href="${albumUrl}"><span
+								class="glyphicon glyphicon-picture"></span> ${file.name} </a>
 						</jstl:if></td>
 					<td>${file.type}</td>					<td><security:authentication
 							property="principal.username" var="currentUser" /> <security:authorize
@@ -271,16 +300,18 @@ function setElementsToMove(folderId){
 	</div>
 </div>
 
+
 <div class="modal fade" id="changeAccess" tabindex="-1" role="dialog"
-	aria-labelledby="changeAccess" aria-hidden="true">
-	<div class="modal-dialog">
+	aria-labelledby="changeAccess" aria-hidden="true">				
+		
+		<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
-				</button>
-				<h4 class="modal-title" id="AccessLabel">Change access</h4>
+				</button>						
+				<h4 class="modal-title" id="UploadLabel">Create Album</h4>
 			</div>
 			<div class="modal-body">
 				<form:form name="changeAccess" method="POST"
@@ -297,10 +328,45 @@ function setElementsToMove(folderId){
 						<input type="hidden" name="file_id">
 					</div>
 				</form:form>
+				</div>
+					<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>	
+					<button type="button" id="btnChangeAccess" class="btn btn-primary">OK</button>			
+				</div>
+			</div>
+			</div>
+	</div>		
+	
+		
+<!-- Dialog for create album -->
+<div class="modal fade" id="createAlbum" tabindex="-1" role="dialog"
+	aria-labelledby="createAlbum" aria-hidden="true">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>						
+				<h4 class="modal-title" id="UploadLabel">Create Album</h4>
+			</div>
+			<div class="modal-body">
+				<form:form name="form_createAlbum" method="POST"
+					servletRelativeAction="/files/createAlbum">
+					<div class="form-group">
+						<label for="message-text" class="control-label">Name:</label> <input
+							type="text" class="form-control" id="name" name="name">
+					</div>
+					<div class="form-group">
+						<input type="hidden" name="parent" id="parent">
+					</div>
+				</form:form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button type="button" id="btnChangeAccess" class="btn btn-primary">OK</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>	
+				
+				<button type="button" id="btnCreateAlbum" class="btn btn-primary">OK</button>
 			</div>
 		</div>
 	</div>

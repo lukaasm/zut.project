@@ -49,5 +49,10 @@
 		<put-attribute name="current" value="users" />
 		<put-attribute name="body" value="/WEB-INF/views/files.jsp" />
 	</definition>
+	
+	<definition name="albums" extends="common">
+		<put-attribute name="current" value="users" />
+		<put-attribute name="body" value="/WEB-INF/views/albums.jsp" />
+	</definition>
 
 </tiles-definitions>

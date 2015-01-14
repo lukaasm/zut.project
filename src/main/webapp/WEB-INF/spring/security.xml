@@ -14,6 +14,8 @@
 		<intercept-url pattern="/users/deleteself" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url pattern="/files**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/files/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/albums**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/albums/**" access="hasRole('ROLE_USER')" />
 		<form-login login-page="/login" />
 		<logout logout-url="/logout" />
 	</http>

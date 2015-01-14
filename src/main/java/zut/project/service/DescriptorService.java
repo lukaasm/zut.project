@@ -14,6 +14,7 @@ import zut.project.repositories.DescriptorRepository;
 public class DescriptorService {
 
 	public final String FOLDER = "Folder";
+	public final String ALBUM = "Album";
 	
 	public final String ACCESS_PUBLIC = "a_public";
 	public final String ACCESS_PRIVATE = "a_private";

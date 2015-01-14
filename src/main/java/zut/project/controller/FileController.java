@@ -1,17 +1,14 @@
 package zut.project.controller;
  
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.management.DescriptorRead;
-import javax.servlet.http.HttpServletRequest;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -89,7 +86,8 @@ public class FileController {
 	    		System.out.println(ex.getMessage()); 
 	    	}
     	}
-		return "redirect:/files";
+    	
+		return "redirect:/files" ;
 	}
     
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -133,7 +131,9 @@ public class FileController {
         	 
          File file = new File(desc.getUrl());
          try {
-             
+        	 System.out.println(file.getAbsolutePath());
+        	 System.out.println(file.getCanonicalPath());
+        	 System.out.println(file.getPath());
         	 BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
         	 response.setContentType(desc.getType());
              response.setContentLength((int)file.length());
@@ -143,7 +143,7 @@ public class FileController {
              response.flushBuffer();
              
            } catch (IOException ex) {
-             System.out.println(ex.getMessage());
+             System.out.println(ex.getMessage()); 
            }                     
      	return "home";
     }    
@@ -232,6 +232,17 @@ public class FileController {
     			int id = Integer.parseInt(i);
     			if(folder == id)
     				continue;
+    			
+    			Descriptor desc = (Descriptor) descriptorService.findOne(folder);
+    			
+    			
+    			if(desc.getType().equals(descriptorService.ALBUM)){
+    				Descriptor file = (Descriptor) descriptorService.findOne(id); 
+    				String[] tmp = file.getType().split("/");
+    				if(!tmp[0].equals("image"))
+    					continue;
+    			}
+    			
     			descriptorService.updateParent(folder, id);
     			System.out.println(i);
     		}
@@ -243,6 +254,67 @@ public class FileController {
     	}
     	    	
     	return "redirect:/files";    	
+    }
+    
+    @RequestMapping(value = "/files/createAlbum", method = RequestMethod.POST)
+   	public String createAlbum(@RequestParam("name") String name, @RequestParam("parent") String parent, 
+   			Principal principal) {       	
+       	
+       		Descriptor descriptor = new Descriptor();
+       		Descriptor desParent = descriptorService.findByName(parent);
+       	
+       		User user = userService.findByName(principal.getName());
+       		
+   	    	descriptor.setName(name);
+   	    	descriptor.setType(descriptorService.ALBUM);
+   	    	descriptor.setUploadTime(new Date());
+   	    	descriptor.setUser( user );
+   	    	descriptor.setParent(desParent);
+   	    	    	    	
+   	    	try
+   	    	{
+   	    		System.out.println(name);   	    		    
+   	    		descriptorService.save(descriptor);
+   	    	}
+   	    	catch(Exception ex)
+   	    	{
+   	    		System.out.println(ex.getMessage());
+   	    	}
+       	
+   		return "redirect:/files";
+   	}
+    
+    @RequestMapping(value = "/albums/{id}", method = RequestMethod.GET)
+    public String showAlbum(@PathVariable int id, Model model) {
+         
+        Descriptor album = (Descriptor) descriptorService.findOne(id);   
+        model.addAttribute("name", album.getName());
+        model.addAttribute("files", descriptorService.findByParent(album));
+         
+        return "albums"; 
+    }
+   
+    @RequestMapping(value = "/image/{id}", method = RequestMethod.GET, produces = "image/jpg")
+    public @ResponseBody byte[] getImage(@PathVariable int id)  {
+        try {
+            // Retrieve image 
+        	Descriptor desc = (Descriptor) descriptorService.findOne(id);
+        	BufferedInputStream stream = new BufferedInputStream(new FileInputStream(new File(desc.getUrl())));	
+        	
+            // Prepare buffered image.
+            BufferedImage img = ImageIO.read(stream);
+
+            // Create a byte array output stream.
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+            // Write to output stream
+            ImageIO.write(img, "jpg", bao);
+
+            return bao.toByteArray();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
     
 }
