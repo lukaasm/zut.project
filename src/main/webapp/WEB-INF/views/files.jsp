@@ -222,8 +222,21 @@ function setElementsToMove(folderId){
 							</jstl:choose>
 						</security:authorize>
 						<jstl:if test="${file.access == 'a_link'}">
-							<a href="${fileUrl}"><span class="glyphicon glyphicon-download"></span>
-								${fileUrl} </a>
+						<jstl:choose>
+							<jstl:when test="${file.type == 'Album' }">
+								<a href="${albumUrl}"><span class="glyphicon glyphicon-download"></span>
+								${albumUrl} </a>
+							</jstl:when>
+							<jstl:when test="${file.type == 'Folder' }">
+								<a href="${folderUrl}"><span class="glyphicon glyphicon-download"></span>
+								${folderUrl} </a>
+							</jstl:when>
+							<jstl:otherwise>
+								<a href="${fileUrl}"><span class="glyphicon glyphicon-download"></span>
+								${fileUrl} </a>	
+							</jstl:otherwise>
+						</jstl:choose>
+							
 						</jstl:if>
 					</td>
 				</tr>
