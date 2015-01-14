@@ -16,12 +16,19 @@
 				<tr>
 					<td>${file.id}</td>
 					<td><spring:url value="/download/${file.id}" var="fileUrl" />
-						<spring:url value="/files/${file.name}" var="folderUrl" /> <jstl:if
-							test="${file.type != 'Folder'}">
-							<a href="${fileUrl}"> ${file.name} </a>
-						</jstl:if> <jstl:if test="${file.type == 'Folder'}">
-							<a href="${folderUrl}"> ${file.name} </a>
-						</jstl:if></td>
+						<spring:url value="/files/${file.name}" var="folderUrl" />
+						<spring:url value="/albums/${file.id}" var="albumUrl" />
+						 <jstl:choose>
+						 <jstl:when test="${file.type == 'Album' }">
+						 	<a href="${albumUrl}"> ${file.name} </a>
+						 </jstl:when>
+ 						<jstl:when test="${file.type == 'Folder' }">
+ 							<a href="${folderUrl}"> ${file.name} </a>
+						 </jstl:when>
+						 <jstl:otherwise>
+						 	<a href="${fileUrl}"> ${file.name} </a>
+						 </jstl:otherwise>							
+						</jstl:choose>
 					<td>${file.type}</td>
 				</tr>
 			</jstl:forEach>
