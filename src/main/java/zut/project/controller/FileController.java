@@ -8,7 +8,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
+import java.util.List;
+
 import javax.imageio.ImageIO;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -40,6 +44,9 @@ public class FileController {
 	private DescriptorService descriptorService;
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private EntityManager em;
 	
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
      
@@ -316,5 +323,35 @@ public class FileController {
             throw new RuntimeException(e);
         }
     }
+      
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+   	public String search(@RequestParam("search") String search, @RequestParam("access") String access, 
+   			Principal principal, Model model) {       
+    	
+    	String[] input = search.split(" ");
+    	// create LIKE query
+    	String likeQuery = "";
+    	
+    	if(input.length == 1)
+    		likeQuery = "\'%" + input[0] + "%\'";
+    	else{
+    		
+    		for(int i=0; i<input.length; i++){ 
+    			likeQuery += "\'%" + input[i] + "%\' ";
+    			if(i != input.length - 1)
+    				likeQuery +=  "OR u.name LIKE ";
+     		}    			
+    	}
+    	String query = "SELECT u FROM Descriptor u WHERE (u.name LIKE " + 
+    					likeQuery + ") AND u.access = \'" + access + "\'";
+    	
+    	Query q =  em.createQuery(query);
+    	System.out.println("LIKE QUERY -> "+ query);
+    	
+    	List<Descriptor> res = (List<Descriptor>) q.getResultList();
+    	model.addAttribute("files", res);
+   	           	
+   		return "search";
+   	}
     
 }
