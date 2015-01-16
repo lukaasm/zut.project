@@ -326,13 +326,16 @@ public class FileController {
       
     @RequestMapping(value = "/search", method = RequestMethod.POST)
    	public String search(@RequestParam("search") String search, @RequestParam("access") String access, 
-   			Principal principal, Model model) {       
+   			@RequestParam("fileTypes") String[] fileTypes, Principal principal, Model model) {       
     	
     	String[] input = search.split(" ");
     	// create LIKE query
     	String likeQuery = "";
+    	String fileTypesQuery ="";
     	
-    	if(input.length == 1)
+    	if (input.length == 0)
+    		likeQuery = "\'%%\'";
+    	else if(input.length == 1)
     		likeQuery = "\'%" + input[0] + "%\'";
     	else{
     		
@@ -342,11 +345,29 @@ public class FileController {
     				likeQuery +=  "OR u.name LIKE ";
      		}    			
     	}
+    	
+    	if (fileTypes.length == 0)
+    		fileTypesQuery = "\'%%\'";
+    	else if(fileTypes.length == 1)
+    		fileTypesQuery = "\'" + fileTypes[0] + "\'";
+    	else{
+    		
+    		for(int i=0; i<fileTypes.length; i++){ 
+    			fileTypesQuery += "\'" + fileTypes[i] + "\' ";
+    			if(i != fileTypes.length - 1)
+    				fileTypesQuery +=  "OR u.type LIKE ";
+     		}    			
+    	}
+    	
+    	
     	String query = "SELECT u FROM Descriptor u WHERE (u.name LIKE " + 
-    					likeQuery + ") AND u.access = \'" + access + "\'";
+    					likeQuery + ") AND u.access = \'" + access + "\' " +
+    					"AND (u.type LIKE " + fileTypesQuery + " )";
     	
     	Query q =  em.createQuery(query);
-    	System.out.println("LIKE QUERY -> "+ query);
+    	System.out.println("LIKE QUERY -> "+ likeQuery);
+    	System.out.println("fileTypes QUERY -> "+ fileTypesQuery);
+    	System.out.println("QUERY -> "+ query);
     	
     	List<Descriptor> res = (List<Descriptor>) q.getResultList();
     	model.addAttribute("files", res);

@@ -9,6 +9,7 @@
 				type="text" class="form-control" name="search" id="search"
 				placeholder="Search">
 			<input type="hidden" name="access" value="a_public"/>
+			<input type="hidden" name="fileTypes"/>
 			
 		</div>
 		<button type="submit" class="btn btn-default">Search</button>
