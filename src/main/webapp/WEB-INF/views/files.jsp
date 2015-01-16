@@ -140,7 +140,19 @@ function setElementsToMove(folderId){
 
 <div class="body">
 	<h1>Files!</h1>
-
+	
+	<form:form class="form-inline" method="POST" servletRelativeAction="/search">		
+		<div class="form-group">			
+			 <input
+				type="text" class="form-control" name="search" id="search"
+				placeholder="Search">
+			<input type="hidden" name="access" value="_"/>
+			<input type="hidden" name="fileTypes"/>
+			
+		</div>
+		<button type="submit" class="btn btn-default">Search</button>
+	</form:form>
+	
 	<div>
 		<ul class="nav nav-pills" role="tablist">
 			<li><button type="button" class="btn btn-primary"
@@ -175,7 +187,7 @@ function setElementsToMove(folderId){
 			</li>
 		</ul>
 	</div>	
-
+	<br>
 	<table id="files" class="table table-bordered table-hover">
 		<thead>
 			<tr>
@@ -209,7 +221,7 @@ function setElementsToMove(folderId){
 							access="isAuthenticated()">
 							<security:authorize access="hasRole('ROLE_ADMIN')" var="isAdmin" />
 							<jstl:choose>
-								<jstl:when test="${currentUser == file.user.name || isAdmin}">
+								<jstl:when test="${pageContext.request.userPrincipal.name == file.user.name || isAdmin}">
 									<button value="${file.id}" type="button"
 										class="btn btn-primary" data-toggle="modal"
 										data-target="#changeAccess">${file.access}</button>

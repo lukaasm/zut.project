@@ -169,6 +169,7 @@ public class FileController {
    	    	descriptor.setUploadTime(new Date());
    	    	descriptor.setUser( user );
    	    	descriptor.setParent(desParent);
+   	    	descriptor.setAccess(descriptorService.ACCESS_PRIVATE);
    	    	    	    	
    	    	try
    	    	{
@@ -277,6 +278,7 @@ public class FileController {
    	    	descriptor.setUploadTime(new Date());
    	    	descriptor.setUser( user );
    	    	descriptor.setParent(desParent);
+   	    	descriptor.setAccess(descriptorService.ACCESS_PRIVATE);
    	    	    	    	
    	    	try
    	    	{
@@ -331,7 +333,8 @@ public class FileController {
     	String[] input = search.split(" ");
     	// create LIKE query
     	String likeQuery = "";
-    	String fileTypesQuery ="";
+    	String fileTypesQuery = "";
+    	String accessQuery = "";
     	
     	if (input.length == 0)
     		likeQuery = "\'%%\'";
@@ -359,10 +362,16 @@ public class FileController {
      		}    			
     	}
     	
+    	if(access.equals(descriptorService.ACCESS_PUBLIC))
+    		accessQuery = "u.access =\'" + access + "\'";
+    	else {
+    		User user = userService.findByName( principal.getName());
+    		accessQuery = "u.user.id = " + user.getId();
+    	}
     	
     	String query = "SELECT u FROM Descriptor u WHERE (u.name LIKE " + 
-    					likeQuery + ") AND u.access = \'" + access + "\' " +
-    					"AND (u.type LIKE " + fileTypesQuery + " )";
+    					likeQuery + ") AND " +  accessQuery  +
+    					" AND (u.type LIKE " + fileTypesQuery + " )";
     	
     	Query q =  em.createQuery(query);
     	System.out.println("LIKE QUERY -> "+ likeQuery);
@@ -371,6 +380,7 @@ public class FileController {
     	
     	List<Descriptor> res = (List<Descriptor>) q.getResultList();
     	model.addAttribute("files", res);
+    	model.addAttribute("access", access);
    	           	
    		return "search";
    	}

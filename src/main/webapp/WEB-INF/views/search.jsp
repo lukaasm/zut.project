@@ -20,7 +20,7 @@ $(function() {
 			 <input
 				type="text" class="form-control" name="search" id="search"
 				placeholder="Search">
-			<input type="hidden" name="access" value="a_public"/>
+			<input type="hidden" name="access" value="${access}"/>
 			<input type="hidden" name="fileTypes" value=""/>
 			
 		</div>
@@ -100,7 +100,7 @@ $(function() {
 							</ul>
 					</div>
 					<div class="form-group">
-						<input type="hidden" name="access" value="a_public">
+						<input type="hidden" name="access" value="${access}">
 						<input type="hidden" name="fileTypes" value="">
 					</div>
 				</form:form>
