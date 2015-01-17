@@ -87,8 +87,13 @@ $(function() {
 	
 $(function() {
 	$("button#btnEditName").click(function() {
-		document.forms["form_editName"].submit();
-		$("#editName").modal('hide');
+		var name = document.forms["form_editName"]["name"].value;
+		if(name == '') alert("Name is required");
+		else if (!isNaN(name)) alert("Name cannot be a number");
+		else{				
+			document.forms["form_editName"].submit();
+			$("#editName").modal('hide');
+		}		
 	});
 });
 
@@ -226,10 +231,7 @@ function setElementsToMove(folderId){
 						</jstl:if>
 					</jstl:forEach>
 				</ul>
-			</li>
-			<li><button type="button" id="btnEditName" class="btn btn-primary"
-					data-toggle="modal" data-target="#editName">Change name</button></li>
-			<li><button type="button" id="btnEditAlbum" class="btn btn-primary">Edit album</button></li>
+			</li>			
 		</ul>
 	</div>	
 	<br>
@@ -239,8 +241,8 @@ function setElementsToMove(folderId){
 				<th width="5%">id</th>
 				<th>file name</th>
 				<th width="30%">content</th>
-				<th width="30%">access</th>
-				<th width="30%">edit</th>
+				<th width="15%">access</th>
+				<th width="15%">edit</th>
 			</tr>
 		</thead>
 		<tbody>

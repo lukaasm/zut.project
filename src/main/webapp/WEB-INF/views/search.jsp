@@ -56,13 +56,15 @@ $(function() {
 						<spring:url value="/albums/${file.id}" var="albumUrl" />
 						 <jstl:choose>
 						 <jstl:when test="${file.type == 'Album' }">
-						 	<a href="${albumUrl}"> ${file.name} </a>
+						 	<a href="${albumUrl}"> <span
+								class="glyphicon glyphicon-picture"></span>  ${file.name} </a>
 						 </jstl:when>
  						<jstl:when test="${file.type == 'Folder' }">
- 							<a href="${folderUrl}"> ${file.name} </a>
+ 							<a href="${folderUrl}"> <span
+								class="glyphicon glyphicon-folder-close"></span>  ${file.name} </a>
 						 </jstl:when>
 						 <jstl:otherwise>
-						 	<a href="${fileUrl}"> ${file.name} </a>
+						 	<a href="${fileUrl}"> <span class="glyphicon glyphicon-file"></span> ${file.name} </a>
 						 </jstl:otherwise>							
 						</jstl:choose>
 					<td>${file.type}</td>
