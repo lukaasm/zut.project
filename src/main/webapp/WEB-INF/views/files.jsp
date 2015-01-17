@@ -52,13 +52,31 @@ $(function() {
 	});
 });
 
+$(function() {
+	$("button#btnedit").click(function() {		
+		var val = this.value;
+		
+		$.ajax({
+			url : "${pageContext.request.contextPath}/files/getName",
+			type : 'POST',
+			data : { id : val}, 
+			success : function(name) {
+				document.forms["form_editName"]["id"].value = val;				
+				document.forms["form_editName"]["name"].value = name;				
+				$("#editName").modal('show');
+			}
+		});			
+	});
+});
+
 $(function(){
-	$('#changeAccess').on(
-			'show.bs.modal',
-			function(e) {
-				document.forms["changeAccess"]["file_id"].value = $(
-						e.relatedTarget).attr("value");
-			});
+		$('#changeAccess').on(
+				'show.bs.modal',
+				function(e) {
+					document.forms["changeAccess"]["file_id"].value = $(
+				e.relatedTarget).attr("value");
+});
+});
 
 $(function() {
 		$("button#btnChangeAccess").click(function() {
@@ -66,7 +84,14 @@ $(function() {
 			$("#changeAccess").modal('hide');
 		});
 	});
+	
+$(function() {
+	$("button#btnEditName").click(function() {
+		document.forms["form_editName"].submit();
+		$("#editName").modal('hide');
+	});
 });
+
 
 $(function(){
 	$("button#btnCreateAlbum").click(function(){
@@ -109,14 +134,20 @@ onload = function() {
 					document.getElementById('rowSelected').innerHTML = rowSelected;
 					document.getElementById('btnDelete').style.display = '';
 					document.getElementById('btnMoveTo').style.display = '';
+					
+					if(rowSelected == 1){
+						document.getElementById('btnEditName').style.display = '';						
+					}
 				}
 				else{
 					document.getElementById('btnDelete').style.display = 'none';
-					document.getElementById('btnMoveTo').style.display = 'none';
+					document.getElementById('btnMoveTo').style.display = 'none';									
 				}
 			}
 		}
 	}
+
+var selectedFileName;
 
 function getSelectedId(){
 	var id = "";
@@ -126,6 +157,7 @@ function getSelectedId(){
 		
 		if(rows[i].style.backgroundColor != ""){				
 			id += $.trim(rows[i].cells[0].innerHTML) + ",";
+			selectedFileName = $.trim(rows[i].cells[1].innerHTML);
 		}
 	}	
 	
@@ -195,6 +227,9 @@ function setElementsToMove(folderId){
 					</jstl:forEach>
 				</ul>
 			</li>
+			<li><button type="button" id="btnEditName" class="btn btn-primary"
+					data-toggle="modal" data-target="#editName">Change name</button></li>
+			<li><button type="button" id="btnEditAlbum" class="btn btn-primary">Edit album</button></li>
 		</ul>
 	</div>	
 	<br>
@@ -205,6 +240,7 @@ function setElementsToMove(folderId){
 				<th>file name</th>
 				<th width="30%">content</th>
 				<th width="30%">access</th>
+				<th width="30%">edit</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -260,6 +296,11 @@ function setElementsToMove(folderId){
 						</jstl:choose>
 							
 						</jstl:if>
+					</td>
+					<td>
+					<button value="${file.id}" id="btnedit" type="button"
+						class="btn btn-primary" 
+						>Change name</button>
 					</td>
 				</tr>
 			</jstl:forEach>
@@ -402,6 +443,42 @@ function setElementsToMove(folderId){
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>	
 				
 				<button type="button" id="btnCreateAlbum" class="btn btn-primary">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Dialog for edit folder/album name -->
+
+<div class="modal fade" id="editName" tabindex="-1" role="dialog"
+	aria-labelledby="editName" aria-hidden="true">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>						
+				<h4 class="modal-title" id="UploadLabel">Change name:</h4>
+			</div>
+			<div class="modal-body">
+				<form:form name="form_editName" method="POST"
+					servletRelativeAction="/files/editName">
+					<div class="form-group">
+						<label for="message-text" class="control-label">Name:</label> <input
+							type="text" class="form-control" id="name" name="name">
+					</div>	
+					<div class="form-group">
+						<input type="hidden" name="id">
+					</div>				
+				</form:form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>	
+				
+				<button type="button" id="btnEditName" class="btn btn-primary">OK</button>
 			</div>
 		</div>
 	</div>

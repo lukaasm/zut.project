@@ -130,7 +130,7 @@ public class FileController {
          Descriptor desc = (Descriptor) descriptorService.findOne(id);
          
          User user = userService.findByName(princ.getName());
-         if ( desc.getAccess().equals(descriptorService.ACCESS_PRIVATE) && user != desc.getUser() )
+         if ( desc.getAccess().equals(descriptorService.ACCESS_PRIVATE) && user.getId() != desc.getUser().getId() )
          {
  			model.addAttribute("This is private!");
  			return "error?id=file-private";
@@ -302,6 +302,32 @@ public class FileController {
          
         return "albums"; 
     }
+    
+    @RequestMapping(value = "/files/getName", method = RequestMethod.POST)
+    public @ResponseBody String getName(@RequestParam int id) {
+         
+        Descriptor file = (Descriptor) descriptorService.findOne(id);   
+                
+        return file.getName(); 
+    }
+    
+    @RequestMapping(value = "/files/editName", method = RequestMethod.POST)
+    public String setName(@RequestParam int id, @RequestParam String name) {
+         
+        Descriptor file = (Descriptor) descriptorService.findOne(id); 
+        System.out.println(file.getName());
+        if(!file.getType().equals(descriptorService.ALBUM) && !file.getType().equals(descriptorService.FOLDER)){
+        	
+        	File f = new File(file.getUrl());
+        	f.renameTo(new File("../" + name));
+        }
+        
+        file.setName(name);
+        file.setUrl("../"+name);
+        descriptorService.save(file);
+        
+        return "redirect:/files"; 
+    }
    
     @RequestMapping(value = "/image/{id}", method = RequestMethod.GET, produces = "image/jpg")
     public @ResponseBody byte[] getImage(@PathVariable int id)  {
@@ -334,7 +360,7 @@ public class FileController {
     	// create LIKE query
     	String likeQuery = "";
     	String fileTypesQuery = "";
-    	String accessQuery = "";
+    	String accessQuery = "";   
     	
     	if (input.length == 0)
     		likeQuery = "\'%%\'";
