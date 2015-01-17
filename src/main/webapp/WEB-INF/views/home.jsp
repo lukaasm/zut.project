@@ -39,9 +39,9 @@ $(document).ready(function() {
 			<jstl:forEach items="${files}" var="file">
 				<tr>
 					<td>${file.id}</td>
-					<td><spring:url value="/download/${file.id}" var="fileUrl" />
-						<spring:url value="/files/${file.name}" var="folderUrl" />
-						<spring:url value="/albums/${file.id}" var="albumUrl" />
+					<td><spring:url value="/get/${file.id}" var="fileUrl" />
+						<spring:url value="/get/${file.id}" var="folderUrl" />
+						<spring:url value="/get/${file.id}" var="albumUrl" />
 						 <jstl:choose>
 						 <jstl:when test="${file.type == 'Album' }">
 						 	<a href="${albumUrl}"> <span

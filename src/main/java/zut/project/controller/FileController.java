@@ -65,14 +65,14 @@ public class FileController {
     }
     
     @RequestMapping(value = "/files/upload", method = RequestMethod.POST)
-	public String upload(@RequestParam("file") CommonsMultipartFile[] files,  @RequestParam("parent") String parent,
+	public String upload(@RequestParam("file") CommonsMultipartFile[] files,  @RequestParam("parent") int parent,
 			Principal principal) {
     	
    		User user = userService.findByName(principal.getName());
 
     	for (CommonsMultipartFile file : files){
     		Descriptor descriptor = new Descriptor();
-    		Descriptor desParent = descriptorService.findByName(parent);
+    		Descriptor desParent = (Descriptor) descriptorService.findOne(parent);
     		descriptor.setParent(desParent);
     		
 	    	descriptor.setName(file.getOriginalFilename());
@@ -116,15 +116,28 @@ public class FileController {
         return "files"; 
     }
     
-    @RequestMapping(value = "/files/{name}", method = RequestMethod.GET)
-    public String filesInFolder(@PathVariable String name, Model model) {
+    @RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
+    public String filesInFolder(@PathVariable int id, Model model) {
         logger.info("Files page !");
-        Descriptor parent = descriptorService.findByName(name);
+        Descriptor parent = (Descriptor) descriptorService.findOne(id);
         model.addAttribute("files", descriptorService.findByParent(parent));
         
         return "files"; 
     }
-       
+    
+    
+    @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
+    public String getFile(@PathVariable Integer id) {
+         Descriptor desc = (Descriptor) descriptorService.findOne(id);
+         
+         if(desc.getType().equals(descriptorService.FOLDER))
+        	 return "redirect:/files/" + id.toString();
+         else if (desc.getType().equals(descriptorService.ALBUM))
+        	 return "redirect:/albums/" + id.toString();
+         else
+        	 return "redirect:/download/" + id.toString();
+    }
+    
     @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
     public String download(@PathVariable Integer id, HttpServletResponse response, Principal princ, Model model) {
          Descriptor desc = (Descriptor) descriptorService.findOne(id);
@@ -160,7 +173,7 @@ public class FileController {
    			Principal principal) {       	
        	
        		Descriptor descriptor = new Descriptor();
-       		Descriptor desParent = descriptorService.findByName(parent);
+       		Descriptor desParent = (Descriptor) descriptorService.findOne(Integer.parseInt(parent));
        	
        		User user = userService.findByName(principal.getName());
        		
@@ -265,11 +278,11 @@ public class FileController {
     }
     
     @RequestMapping(value = "/files/createAlbum", method = RequestMethod.POST)
-   	public String createAlbum(@RequestParam("name") String name, @RequestParam("parent") String parent, 
+   	public String createAlbum(@RequestParam("name") String name, @RequestParam("parent") int parent, 
    			Principal principal) {       	
        	
        		Descriptor descriptor = new Descriptor();
-       		Descriptor desParent = descriptorService.findByName(parent);
+       		Descriptor desParent = (Descriptor) descriptorService.findOne(parent);
        	
        		User user = userService.findByName(principal.getName());
        		

@@ -15,7 +15,10 @@ $(function(){
 	$("button#btnUpload").click(function(){
 		//get last parent
 		var path = document.URL.split("/");
-		document.forms["form"]["parent"].value = path[path.length - 1];
+		if(path[path.length - 1] == 'files')
+			document.forms["form"]["parent"].value = 0;
+		else
+			document.forms["form"]["parent"].value = path[path.length - 1];
 		
 		document.forms["form"].submit();
 		$("#upload").modal('hide');
@@ -26,7 +29,11 @@ $(function(){
 	$("button#btnCreateFolder").click(function(){
 		//get last parent
 		var path = document.URL.split("/");
-		document.forms["form_createFolder"]["parent"].value = path[path.length - 1];
+		
+		if(path[path.length - 1] == 'files')
+			document.forms["form_createFolder"]["parent"].value = 1;
+		else
+			document.forms["form_createFolder"]["parent"].value = path[path.length - 1];
 		
 		var name = document.forms["form_createFolder"]["name"].value;
 		if(name == '') alert("Name is required");
@@ -102,7 +109,11 @@ $(function(){
 	$("button#btnCreateAlbum").click(function(){
 		//get last parent
 		var path = document.URL.split("/");
-		document.forms["form_createAlbum"]["parent"].value = path[path.length - 1];
+		
+		if(path[path.length - 1] == 'files')
+			document.forms["form_createAlbum"]["parent"].value = 0;
+		else
+			document.forms["form_createAlbum"]["parent"].value = path[path.length - 1];
 		
 		var name = document.forms["form_createAlbum"]["name"].value;
 		if(name == '') alert("Name is required");
@@ -250,9 +261,9 @@ function setElementsToMove(folderId){
 			<jstl:forEach items="${files}" var="file">
 				<tr>
 					<td>${file.id}</td>
-					<td><spring:url value="/download/${file.id}" var="fileUrl" />
-						<spring:url value="/files/${file.name}" var="folderUrl" />
-						<spring:url value="/albums/${file.id}" var="albumUrl" /> 
+					<td><spring:url value="/get/${file.id}" var="fileUrl" />
+						<spring:url value="/get/${file.id}" var="folderUrl" />
+						<spring:url value="/get/${file.id}" var="albumUrl" /> 
 						<jstl:if
 							test="${file.type != 'Folder' && file.type != 'Album'}">
 							<a href="${fileUrl}"><span class="glyphicon glyphicon-file"></span>
