@@ -2,6 +2,15 @@
 
 <script>
 
+
+$(document).ready(function() {
+    $('#files').DataTable({
+    	"searching": false,
+    	"ordering" : true,
+    });
+} );
+
+
 $(function() {
 	$("button#btnSearch").click(function() {
 		document.forms["form_advanced"].submit();
@@ -33,9 +42,9 @@ $(function() {
 	<table id="files" class="table table-bordered table-hover">
 		<thead>
 			<tr>
-				<td width="5%">id</td>
-				<td>file name</td>
-				<td width="30%">content</td>
+				<th width="5%">id</th>
+				<th>file name</th>
+				<th width="30%">content</th>
 			</tr>
 		</thead>
 		<tbody>

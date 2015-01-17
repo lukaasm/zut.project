@@ -1,7 +1,6 @@
 package zut.project.service;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class DescriptorService {
 	public final String ACCESS_PUBLIC = "a_public";
 	public final String ACCESS_PRIVATE = "a_private";
 	public final String ACCESS_LINK = "a_link";
-
+	
 	@Autowired
 	private DescriptorRepository descriptorRepository;
 	

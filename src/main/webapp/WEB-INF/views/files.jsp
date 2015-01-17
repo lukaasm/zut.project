@@ -1,6 +1,16 @@
 <%@ include file="../template/taglib.jsp"%>
 
 <script>
+
+
+$(document).ready(function() {
+    $('#files').DataTable({
+    	"searching": false,
+    	"ordering" : true,
+    });
+} );
+
+
 $(function(){
 	$("button#btnUpload").click(function(){
 		//get last parent
@@ -191,10 +201,10 @@ function setElementsToMove(folderId){
 	<table id="files" class="table table-bordered table-hover">
 		<thead>
 			<tr>
-				<td width="5%">id</td>
-				<td>file name</td>
-				<td width="30%">content</td>
-				<td width="30%">access</td>
+				<th width="5%">id</th>
+				<th>file name</th>
+				<th width="30%">content</th>
+				<th width="30%">access</th>
 			</tr>
 		</thead>
 		<tbody>
