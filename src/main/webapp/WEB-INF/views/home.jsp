@@ -32,6 +32,7 @@ $(document).ready(function() {
 				<th width="5%">id</th>
 				<th>file name</th>
 				<th width="30%">content</th>
+				<th width="10%">upload time</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -55,6 +56,9 @@ $(document).ready(function() {
 						 </jstl:otherwise>							
 						</jstl:choose>
 					<td>${file.type}</td>
+					<td><fmt:formatDate type="both" 
+			            dateStyle="short" timeStyle="short" 
+			            value="${file.uploadTime}"></fmt:formatDate></td>
 				</tr>
 			</jstl:forEach>
 		</tbody>

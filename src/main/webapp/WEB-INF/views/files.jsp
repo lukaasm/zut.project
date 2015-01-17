@@ -241,8 +241,9 @@ function setElementsToMove(folderId){
 				<th width="5%">id</th>
 				<th>file name</th>
 				<th width="30%">content</th>
-				<th width="15%">access</th>
-				<th width="15%">edit</th>
+				<th width="15%">upload time </th>
+				<th width="10%">access</th>
+				<th width="10%">edit</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -264,7 +265,12 @@ function setElementsToMove(folderId){
 							<a href="${albumUrl}"><span
 								class="glyphicon glyphicon-picture"></span> ${file.name} </a>
 						</jstl:if></td>
-					<td>${file.type}</td>					<td><security:authentication
+					<td>${file.type}</td>
+					<td><fmt:formatDate type="both" 
+			            dateStyle="short" timeStyle="short" 
+			            value="${file.uploadTime}"></fmt:formatDate></td>
+										
+										<td><security:authentication
 							property="principal.username" var="currentUser" /> <security:authorize
 							access="isAuthenticated()">
 							<security:authorize access="hasRole('ROLE_ADMIN')" var="isAdmin" />
@@ -298,8 +304,8 @@ function setElementsToMove(folderId){
 						</jstl:choose>
 							
 						</jstl:if>
-					</td>
-					<td>
+					</td>	
+					<td>				
 					<button value="${file.id}" id="btnedit" type="button"
 						class="btn btn-primary" 
 						>Change name</button>
