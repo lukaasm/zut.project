@@ -193,7 +193,7 @@ function setElementsToMove(folderId){
 			 <input
 				type="text" class="form-control" name="search" id="search"
 				placeholder="Search">
-			<input type="hidden" name="access" value="_"/>
+			<input type="hidden" name="access" value="a_private"/>
 			<input type="hidden" name="fileTypes"/>
 			
 		</div>
@@ -451,7 +451,7 @@ function setElementsToMove(folderId){
 </div>
 
 
-<!-- Dialog for edit folder/album name -->
+<!-- Dialog for edit name -->
 
 <div class="modal fade" id="editName" tabindex="-1" role="dialog"
 	aria-labelledby="editName" aria-hidden="true">
