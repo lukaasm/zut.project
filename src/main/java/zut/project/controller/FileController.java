@@ -59,7 +59,7 @@ public class FileController {
     public String home(Model model) {
         model.addAttribute("files", descriptorService.findByParentAndAccess(null, descriptorService.ACCESS_PUBLIC));
          
-        return "home";
+        return "home"; 
     }
     
     @RequestMapping(value = "/upload", method = RequestMethod.GET)
@@ -99,7 +99,7 @@ public class FileController {
 	    	}
     	}
     	
-		return "redirect:/files" ;
+		return "redirect:/account/files" ;
 	}
     
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -121,7 +121,7 @@ public class FileController {
         return "files"; 
     }
     
-    @RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/account/files/{id}", method = RequestMethod.GET)
     public String filesInFolder(@PathVariable int id, Model model, Principal principal) {
         logger.info("Files page !");
         Descriptor parent = (Descriptor) descriptorService.findOne(id);
@@ -144,11 +144,11 @@ public class FileController {
          Descriptor desc = (Descriptor) descriptorService.findOne(id);
          
          if(desc.getType().equals(descriptorService.FOLDER))
-        	 return "redirect:/files/" + id.toString();
+        	 return "redirect:/account/files/" + id.toString();
          else if (desc.getType().equals(descriptorService.ALBUM))
         	 return "redirect:/albums/" + id.toString();
          else
-        	 return "redirect:/download/" + id.toString();
+        	 return "redirect:/download/" + id.toString(); 
     }
     
     
@@ -275,7 +275,7 @@ public class FileController {
    	    		System.out.println(ex.getMessage());
    	    	}
        	
-   		return "redirect:/files";
+   		return "redirect:/account/files";
    	} 
     
     @RequestMapping(value = "/files/updateAccess", method = RequestMethod.POST)
@@ -304,7 +304,7 @@ public class FileController {
     	{
     		System.out.println(ex.getMessage());
     	}
-   		return "redirect:/files";
+   		return "redirect:/account/files";
    	} 
     
     @RequestMapping(value = "/files/delete", method = RequestMethod.POST)
@@ -317,7 +317,7 @@ public class FileController {
     			Descriptor desc = (Descriptor) descriptorService.findOne(id);
     			
     			// file must be delete from server
-    			if(!desc.getType().equals(descriptorService.FOLDER)){
+    			if(!desc.getType().equals(descriptorService.FOLDER) && !desc.getType().equals(descriptorService.ALBUM)){
     				new File(desc.getUrl()).delete();
     				System.out.println("Delete file");
     			}
@@ -333,7 +333,7 @@ public class FileController {
     		
     	}
     	    	
-    	return "redirect:/files";    	
+    	return "redirect:/account/files";    	
     }
     
     @RequestMapping(value = "/files/move", method = RequestMethod.POST)
@@ -366,7 +366,7 @@ public class FileController {
     		
     	}
     	    	
-    	return "redirect:/files";    	
+    	return "redirect:/account/files";    	
     }
     
     @RequestMapping(value = "/files/createAlbum", method = RequestMethod.POST)
@@ -395,7 +395,7 @@ public class FileController {
    	    		System.out.println(ex.getMessage());
    	    	}
        	
-   		return "redirect:/files";
+   		return "redirect:/account/files";
    	}
     
     @RequestMapping(value = "/albums/{id}", method = RequestMethod.GET)
@@ -431,7 +431,7 @@ public class FileController {
         file.setUrl("../"+name);
         descriptorService.save(file);
         
-        return "redirect:/files"; 
+        return "redirect:/account/files"; 
     }
    
     @RequestMapping(value = "/image/{id}", method = RequestMethod.GET, produces = "image/jpg")
@@ -512,7 +512,7 @@ public class FileController {
     	List<Descriptor> res = (List<Descriptor>) q.getResultList();
     	model.addAttribute("files", res);
     	model.addAttribute("access", access);
-   	           	
+   	           	 
    		return "search";
    	}
     

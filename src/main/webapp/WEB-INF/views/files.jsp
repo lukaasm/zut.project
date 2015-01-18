@@ -15,7 +15,7 @@ $(function(){
 	$("button#btnUpload").click(function(){
 		//get last parent
 		var path = document.URL.split("/");
-		if(path[path.length - 1] == 'files')
+		if(path[path.length - 1] == 'files' || path[path.length - 1] == 'all')
 			document.forms["form"]["parent"].value = 0;
 		else
 			document.forms["form"]["parent"].value = path[path.length - 1];
@@ -30,7 +30,7 @@ $(function(){
 		//get last parent
 		var path = document.URL.split("/");
 		
-		if(path[path.length - 1] == 'files')
+		if(path[path.length - 1] == 'files'  || path[path.length - 1] == 'all')
 			document.forms["form_createFolder"]["parent"].value = 1;
 		else
 			document.forms["form_createFolder"]["parent"].value = path[path.length - 1];
@@ -54,7 +54,7 @@ $(function() {
 		$.post("${pageContext.request.contextPath}/files/delete", {
 			filesToDelete : id
 		}, function() {
-			window.location.replace(document.URL);
+			window.location.replace("${pageContext.request.contextPath}/account/files");
 		});					
 	});
 });
@@ -118,7 +118,7 @@ $(function(){
 		//get last parent
 		var path = document.URL.split("/");
 		
-		if(path[path.length - 1] == 'files')
+		if(path[path.length - 1] == 'files' || path[path.length - 1] == 'all')
 			document.forms["form_createAlbum"]["parent"].value = 0;
 		else
 			document.forms["form_createAlbum"]["parent"].value = path[path.length - 1];
@@ -199,7 +199,7 @@ function setElementsToMove(folderId){
 			folder : folderId,
 			elements : elements
 		}, function() {
-			window.location.replace(document.URL);
+			window.location.replace("${pageContext.request.contextPath}/account/files");
 		});
 	}
 
