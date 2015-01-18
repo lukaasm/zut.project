@@ -33,6 +33,7 @@ $(document).ready(function() {
 				<th>file name</th>
 				<th width="30%">content</th>
 				<th width="10%">upload time</th>
+				<th width="10%">user</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -59,6 +60,7 @@ $(document).ready(function() {
 					<td><fmt:formatDate type="both" 
 			            dateStyle="short" timeStyle="short" 
 			            value="${file.uploadTime}"></fmt:formatDate></td>
+			         <td>${file.user.name }</td>
 				</tr>
 			</jstl:forEach>
 		</tbody>

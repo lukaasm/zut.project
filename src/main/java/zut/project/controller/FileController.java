@@ -117,7 +117,7 @@ public class FileController {
     public String filesAll(Model model) {
         logger.info("Files page !");
         model.addAttribute("files", descriptorService.findAll());
-        model.addAttribute("access", descriptorService.ACCESS_PRIVATE);
+        model.addAttribute("access", "admin");
         return "files"; 
     }
     

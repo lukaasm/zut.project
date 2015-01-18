@@ -223,7 +223,7 @@ function setElementsToMove(folderId){
 	
 	<div>
 		<ul class="nav nav-pills" role="tablist">
-		<jstl:if test="${access == 'a_private' }">
+		<jstl:if test="${access == 'a_private' || access == 'admin' }">
 			<li><button type="button" class="btn btn-primary"
 					data-toggle="modal" data-target="#upload">Upload</button></li>
 			<li><button type="button" class="btn btn-primary"
@@ -270,7 +270,10 @@ function setElementsToMove(folderId){
 				<th width="40%" >file name</th>
 				<th width="30%">content</th>
 				<th width="15%">upload time </th>
-				<jstl:if test="${access == 'a_private' }">
+				<jstl:if test="${access == 'admin' }">
+				<th>user</th>
+				</jstl:if>
+				<jstl:if test="${access == 'a_private' || access == 'admin' }">
 					<th width="5%">access</th>
 					<th width="5%">edit</th>
 				</jstl:if>
@@ -299,7 +302,11 @@ function setElementsToMove(folderId){
 					<td><fmt:formatDate type="both" 
 			            dateStyle="short" timeStyle="short" 
 			            value="${file.uploadTime}"></fmt:formatDate></td>
-							<jstl:if test="${access == 'a_private' }">				
+			            <jstl:if test="${access == 'admin' }">
+			            <td>${file.user.name}</td>
+			            </jstl:if>
+			            			            
+							<jstl:if test="${access == 'a_private' || access == 'admin' }">				
 										<td><security:authentication
 							property="principal.username" var="currentUser" /> <security:authorize
 							access="isAuthenticated()">
@@ -348,7 +355,7 @@ function setElementsToMove(folderId){
 	</table>
 </div>
 
-<jstl:if test="${access == 'a_private' }">
+<jstl:if test="${access == 'a_private' || access == 'admin' }">
 <!-- Dialog for upload files -->
 <div class="modal fade" id="upload" tabindex="-1" role="dialog"
 	aria-labelledby="Upload" aria-hidden="true">
