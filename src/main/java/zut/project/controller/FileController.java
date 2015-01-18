@@ -5,10 +5,14 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
@@ -22,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -138,6 +143,8 @@ public class FileController {
         	 return "redirect:/download/" + id.toString();
     }
     
+    
+    
     @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
     public String download(@PathVariable Integer id, HttpServletResponse response, Principal princ, Model model) {
          Descriptor desc = (Descriptor) descriptorService.findOne(id);
@@ -168,6 +175,72 @@ public class FileController {
      	return "home";
     }    
    
+    @RequestMapping(value = "/multi-download/{download}", method = RequestMethod.GET)
+    
+    public void multiDownload(@PathVariable String download, HttpServletResponse response) {
+    	String[] id = download.split(",");
+        String zipName = "../download.zip"; 
+        List<Descriptor> list = new ArrayList<Descriptor>();
+        
+        for(String i : id){
+        	Descriptor desc = (Descriptor) descriptorService.findOne(Integer.parseInt(i));
+        	
+        	if(desc.getType().equals(descriptorService.ALBUM) || desc.getType().equals(descriptorService.FOLDER))
+        		list.addAll(descriptorService.findByParent(desc));
+        	else
+        		list.add(desc);       
+        }
+        
+		try {
+
+			byte[] buffer = new byte[1024];
+			FileOutputStream fos = new FileOutputStream(zipName);
+			ZipOutputStream zos = new ZipOutputStream(fos);
+
+			for (Descriptor file : list) {
+				File srcFile = new File(file.getUrl());
+				FileInputStream fis = new FileInputStream(srcFile);
+
+				zos.putNextEntry(new ZipEntry(srcFile.getName()));
+				
+				int length;
+				while ((length = fis.read(buffer)) > 0) {
+
+					zos.write(buffer, 0, length);
+				}
+
+				zos.closeEntry();
+
+				fis.close();
+			}
+			zos.flush();
+			zos.close();
+			fos.close();
+		} catch (IOException ioe) {
+			System.out.println("Error creating zip file: " + ioe);
+
+		}
+
+         
+         File file = new File(zipName);      
+         System.out.println(file.getAbsolutePath());
+         try {
+        	 
+        	 BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
+        	 response.reset();
+        	 response.setContentType("application/force-download");
+        	 response.setContentLength((int)file.length());
+             response.setHeader("Content-Disposition", "attachment; filename="+file.getName());  
+             
+             IOUtils.copy(stream, response.getOutputStream());              
+             response.flushBuffer();
+              
+           } catch (IOException ex) {
+             System.out.println(ex.getMessage()); 
+           }                     
+     	 
+    }    
+    
     @RequestMapping(value = "/files/createFolder", method = RequestMethod.POST)
    	public String createFolder(@RequestParam("name") String name, @RequestParam("parent") String parent, 
    			Principal principal) {       	

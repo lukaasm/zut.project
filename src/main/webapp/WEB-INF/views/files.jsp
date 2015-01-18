@@ -60,6 +60,14 @@ $(function() {
 });
 
 $(function() {
+	$("button#btnDownload").click(function() {
+		var id = getSelectedId();
+		window.location.replace("${pageContext.request.contextPath}/multi-download/" + id);
+						
+	});
+});
+
+$(function() {
 	$("button#btnedit").click(function() {		
 		var val = this.value;
 		
@@ -148,16 +156,16 @@ onload = function() {
 				}
 				if(rowSelected > 0){
 					document.getElementById('rowSelected').innerHTML = rowSelected;
+					document.getElementById('rowSelected2').innerHTML = rowSelected;
 					document.getElementById('btnDelete').style.display = '';
 					document.getElementById('btnMoveTo').style.display = '';
+					document.getElementById('btnDownload').style.display = '';					
 					
-					if(rowSelected == 1){
-						document.getElementById('btnEditName').style.display = '';						
-					}
 				}
 				else{
 					document.getElementById('btnDelete').style.display = 'none';
-					document.getElementById('btnMoveTo').style.display = 'none';									
+					document.getElementById('btnMoveTo').style.display = 'none';	
+					document.getElementById('btnDownload').style.display = 'none';
 				}
 			}
 		}
@@ -225,6 +233,11 @@ function setElementsToMove(folderId){
 					style="display: none">
 					Delete <span id="rowSelected" class="badge">#</span>
 				</button></li>
+			
+			<li><button id="btnDownload" class="btn btn-primary" type="button"
+					style="display: none">
+					Download <span id="rowSelected2" class="badge">#</span>
+				</button></li>
 
 			<li class="dropdown">
 				<button id="btnMoveTo" type="button" style="display: none"
@@ -250,11 +263,11 @@ function setElementsToMove(folderId){
 		<thead>
 			<tr>
 				<th width="5%">id</th>
-				<th>file name</th>
+				<th width="40%" >file name</th>
 				<th width="30%">content</th>
 				<th width="15%">upload time </th>
-				<th width="10%">access</th>
-				<th width="10%">edit</th>
+				<th width="5%">access</th>
+				<th width="5%">edit</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -319,7 +332,7 @@ function setElementsToMove(folderId){
 					<td>				
 					<button value="${file.id}" id="btnedit" type="button"
 						class="btn btn-primary" 
-						>Change name</button>
+						>Edit</button>
 					</td>
 				</tr>
 			</jstl:forEach>
