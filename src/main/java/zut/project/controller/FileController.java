@@ -107,8 +107,8 @@ public class FileController {
     public String files(Model model) {
         logger.info("Files page !");
         // get items without any parents
-        model.addAttribute("files", descriptorService.findByParent(null));
-         
+        model.addAttribute("files", descriptorService.findByParent(null));               
+        model.addAttribute("access", descriptorService.ACCESS_PRIVATE);        
         return "files"; 
     }
     
@@ -117,14 +117,22 @@ public class FileController {
     public String filesAll(Model model) {
         logger.info("Files page !");
         model.addAttribute("files", descriptorService.findAll());
-         
+        model.addAttribute("access", descriptorService.ACCESS_PRIVATE);
         return "files"; 
     }
     
     @RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
-    public String filesInFolder(@PathVariable int id, Model model) {
+    public String filesInFolder(@PathVariable int id, Model model, Principal principal) {
         logger.info("Files page !");
         Descriptor parent = (Descriptor) descriptorService.findOne(id);
+        User user = userService.findByName(principal.getName());
+        
+        if(user.getId() == parent.getUser().getId())
+        	model.addAttribute("access", descriptorService.ACCESS_PRIVATE);
+        else
+        	model.addAttribute("access", descriptorService.ACCESS_PUBLIC);
+        	
+        
         model.addAttribute("files", descriptorService.findByParent(parent));
         
         return "files"; 
@@ -278,8 +286,19 @@ public class FileController {
     	try
     	{
 	   		Descriptor descriptor = (Descriptor) descriptorService.findOne(Integer.parseInt(id));
-	       	descriptor.setAccess(access);
+	   		
+	   		if(descriptor.getType().equals(descriptorService.FOLDER)){
+	   			
+	   			List<Descriptor> list = descriptorService.findByParent(descriptor);
+	   			for(int i = 0; i < list.size(); i++ ){
+	   				list.get(i).setAccess(access);
+	   				descriptorService.save(list.get(i));
+	   			}	   			
+	   		}
+	   		
+	   		descriptor.setAccess(access);
 	   		descriptorService.save(descriptor);
+	   		
     	}
     	catch(Exception ex)
     	{

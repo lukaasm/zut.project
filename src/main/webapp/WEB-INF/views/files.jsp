@@ -155,17 +155,19 @@ onload = function() {
 				
 				}
 				if(rowSelected > 0){
-					document.getElementById('rowSelected').innerHTML = rowSelected;
+					document.getElementById('btnDownload').style.display = '';	
 					document.getElementById('rowSelected2').innerHTML = rowSelected;
+					document.getElementById('rowSelected').innerHTML = rowSelected;
 					document.getElementById('btnDelete').style.display = '';
 					document.getElementById('btnMoveTo').style.display = '';
-					document.getElementById('btnDownload').style.display = '';					
+									
 					
 				}
 				else{
+					document.getElementById('btnDownload').style.display = 'none';
 					document.getElementById('btnDelete').style.display = 'none';
 					document.getElementById('btnMoveTo').style.display = 'none';	
-					document.getElementById('btnDownload').style.display = 'none';
+					
 				}
 			}
 		}
@@ -221,6 +223,7 @@ function setElementsToMove(folderId){
 	
 	<div>
 		<ul class="nav nav-pills" role="tablist">
+		<jstl:if test="${access == 'a_private' }">
 			<li><button type="button" class="btn btn-primary"
 					data-toggle="modal" data-target="#upload">Upload</button></li>
 			<li><button type="button" class="btn btn-primary"
@@ -229,16 +232,6 @@ function setElementsToMove(folderId){
 			<li><button type="button" class="btn btn-primary"
 					data-toggle="modal" data-target="#createAlbum">Create
 					album</button></li>
-			<li><button id="btnDelete" class="btn btn-primary" type="button"
-					style="display: none">
-					Delete <span id="rowSelected" class="badge">#</span>
-				</button></li>
-			
-			<li><button id="btnDownload" class="btn btn-primary" type="button"
-					style="display: none">
-					Download <span id="rowSelected2" class="badge">#</span>
-				</button></li>
-
 			<li class="dropdown">
 				<button id="btnMoveTo" type="button" style="display: none"
 					class="btn btn-primary" data-toggle="dropdown" aria-haspopup="true"
@@ -255,7 +248,18 @@ function setElementsToMove(folderId){
 						</jstl:if>
 					</jstl:forEach>
 				</ul>
-			</li>			
+			</li>	
+			
+			<li><button id="btnDelete" class="btn btn-primary" type="button"
+					style="display: none">
+					Delete <span id="rowSelected" class="badge">#</span>
+				</button></li>
+			</jstl:if>
+			<li><button id="btnDownload" class="btn btn-primary" type="button"
+					style="display: none">
+					Download <span id="rowSelected2" class="badge">#</span>
+				</button></li>
+					
 		</ul>
 	</div>	
 	<br>
@@ -266,8 +270,10 @@ function setElementsToMove(folderId){
 				<th width="40%" >file name</th>
 				<th width="30%">content</th>
 				<th width="15%">upload time </th>
-				<th width="5%">access</th>
-				<th width="5%">edit</th>
+				<jstl:if test="${access == 'a_private' }">
+					<th width="5%">access</th>
+					<th width="5%">edit</th>
+				</jstl:if>
 			</tr>
 		</thead>
 		<tbody>
@@ -293,7 +299,7 @@ function setElementsToMove(folderId){
 					<td><fmt:formatDate type="both" 
 			            dateStyle="short" timeStyle="short" 
 			            value="${file.uploadTime}"></fmt:formatDate></td>
-										
+							<jstl:if test="${access == 'a_private' }">				
 										<td><security:authentication
 							property="principal.username" var="currentUser" /> <security:authorize
 							access="isAuthenticated()">
@@ -325,21 +331,24 @@ function setElementsToMove(folderId){
 								<a href="${fileUrl}"><span class="glyphicon glyphicon-download"></span>
 								${fileUrl} </a>	
 							</jstl:otherwise>
-						</jstl:choose>
-							
-						</jstl:if>
+						</jstl:choose>						
+						</jstl:if>	
 					</td>	
 					<td>				
 					<button value="${file.id}" id="btnedit" type="button"
 						class="btn btn-primary" 
 						>Edit</button>
 					</td>
+					</jstl:if>				
+					
+					
 				</tr>
 			</jstl:forEach>
 		</tbody>
 	</table>
 </div>
 
+<jstl:if test="${access == 'a_private' }">
 <!-- Dialog for upload files -->
 <div class="modal fade" id="upload" tabindex="-1" role="dialog"
 	aria-labelledby="Upload" aria-hidden="true">
@@ -515,3 +524,4 @@ function setElementsToMove(folderId){
 		</div>
 	</div>
 </div>
+</jstl:if>
