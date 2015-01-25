@@ -117,6 +117,7 @@ public class UserController {
 	public String accountFiles(Model model, Principal principal) {
 		User user = userService.findByName(principal.getName());
 		model.addAttribute("files", descriptorService.findByUserAndParent(user, null));
+		model.addAttribute("access", descriptorService.ACCESS_PRIVATE);
 		return "files";
 	}
 

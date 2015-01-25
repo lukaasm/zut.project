@@ -20,6 +20,7 @@ public interface DescriptorRepository extends JpaRepository<Descriptor, Integer>
 	@Modifying 
 	@Transactional
 	@Query("update Descriptor u set u.parent.id = ?1 where u.id = ?2")
-	int setNewParent(int folderId, int elementId);
-
+	int setNewParent(int folderId, int elementId);	 
+	
+	
 }

@@ -1,12 +1,23 @@
 <%@ include file="../template/taglib.jsp" %>
 
+<script>
+
+$(document).ready(function() {
+    $('#users').DataTable({
+    	"searching": true,
+    	"ordering" : true,
+    });
+} );
+
+</script>
+
 <div class="body">
 	<h1>USERS!</h1>
-	<table class="table table-bordered table-hover">
+	<table id="users" class="table table-bordered table-hover">
 		<thead>
 			<tr>
-				<td>user name</td>
-				<td style="width:10px"></td>
+				<th>user name</th>
+				<th style="width:10px"></th>
 			</tr>
 		</thead>
 		<tbody>
