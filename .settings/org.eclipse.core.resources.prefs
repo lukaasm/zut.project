@@ -1,3 +1,4 @@
 eclipse.preferences.version=1
+encoding//src/main/webapp/WEB-INF/template/default/footer.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/tiles/tiles-definitions.xml=UTF-8
 encoding//src/main/webapp/WEB-INF/views/files.jsp=UTF-8

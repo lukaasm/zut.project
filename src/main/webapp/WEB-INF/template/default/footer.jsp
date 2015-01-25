@@ -1,4 +1,4 @@
 <%@ include file="../taglib.jsp" %>
 
 
-Test footer
+ZUT Project : Dawid Graczyk & Mazurkiewicz Łukasz
